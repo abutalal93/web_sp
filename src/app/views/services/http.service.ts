@@ -20,7 +20,7 @@ export class HttpService {
    async httpRequest(request_options:any): Promise<any>{
 
     if(this.cookieService.check('user')){
-      this.headers.set('Authorization',this.cookieService.get('user'));
+      this.headers.set('Authorization','Bearer ' + this.cookieService.get('user'));
     }
   
     this.options.headers = this.headers;
