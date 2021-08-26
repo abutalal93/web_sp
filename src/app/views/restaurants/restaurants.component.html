@@ -37,7 +37,7 @@
             <td> {{ rest.email }}</td>
             <td>
               <span *ngIf="rest.status == 'ACTIVE'" class="badge badge-success">Active</span>
-              <span *ngIf="rest.status == 'INACTIVE'" class="badge badge-error">Inactive</span>
+              <span *ngIf="rest.status == 'INACTIVE'" class="badge badge-warning">Inactive</span>
             </td>
             <td>
               <button (click)='editItem(item)' type="button" class="btn btn-ghost-primary"><i class="cil-pen"></i></button>

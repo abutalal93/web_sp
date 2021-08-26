@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 
 import { IconSetService } from '@coreui/icons-angular';
 import { freeSet } from '@coreui/icons';
+import { HttpService } from './views/services/http.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   // tslint:disable-next-line
@@ -16,13 +18,21 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    public iconSet: IconSetService
+    public iconSet: IconSetService,
+    private httpService: HttpService,
+    private cookieService: CookieService
   ) {
     // iconSet singleton
     iconSet.icons = { ...freeSet };
   }
 
-  ngOnInit() {
+
+  async ngOnInit() {
+
+    if(this.cookieService.check('user')){
+      await this.httpService.refreshToken();
+    }
+
     this.router.events.subscribe((evt) => {
       if (!(evt instanceof NavigationEnd)) {
         return;

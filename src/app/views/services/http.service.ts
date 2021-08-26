@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../services/auth-service.service';
 import { FormGroup } from '@angular/forms';
+import { User } from '../model/user';
 
 @Injectable()
 export class HttpService {
@@ -57,6 +58,44 @@ export class HttpService {
 
 
   }
+
+  async refreshToken(): Promise<any>{
+
+    if(this.cookieService.check('user')){
+      this.headers.set('Authorization','Bearer ' + this.cookieService.get('user'));
+    }
+  
+    this.options.headers = this.headers;
+    this.options.method = "GET";
+    this.path = "sp/user/refresh" ;
+    let http_response = await this.http.request(this.apiUrl + this.prefix + this.path,  this.options)
+    .toPromise()
+    .then(response => response.json())
+    .catch((err: any) => {
+      let response: any;
+      switch(err.status){
+        case 401:
+          response = { status: err.status , message: 'Invalid username or password'}
+          this.authService.logoutUser();
+          break;
+        case 500:
+          response = { status: err.status , message: 'Internal Server Error'}
+          break;
+        default:
+          response = err.json();
+          break;
+        }
+
+      return response;
+    });
+
+    this.authService.setIsUserLoggedIn(true);
+    const user = new User(http_response.data.id, http_response.data.token, http_response.data.firstName + " " +http_response.data.lastName,http_response.data.username);
+    this.authService.setLoggedInUser(user);
+
+    return http_response;
+  }
+
 
   markFormGroupTouched(form: FormGroup) {
     (<any>Object).values(form.controls).forEach(control => {
