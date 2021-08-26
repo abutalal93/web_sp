@@ -3,6 +3,7 @@ import { fadeInOutTranslate } from '../animations/animation';
 import { HttpService } from '../services/http.service';
 import { NotifyService } from '../services/notify.service';
 import Swal from 'sweetalert2'
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: 'restaurants.component.html',
@@ -21,12 +22,53 @@ export class RestaurantsComponent implements OnInit {
   
   showTable = true;
 
+  ariaList = [];
+  cityList = [];
+  districtList = [];
+
+  rest: FormGroup;
+
+
   async ngOnInit() {
+    this.loadForm();
     await this.findRestaurants();
+    
+  
   }
 
   constructor(private httpService: HttpService, private notifyService: NotifyService) {
+    this.findAria();
+  }
 
+
+  loadForm() {
+    this.rest = new FormGroup({
+      commercialRegister: new FormControl(''),
+      brandNameEn: new FormControl(''),
+      brandNameAr: new FormControl(''),
+      taxNumber: new FormControl(''),
+      logo: new FormControl(''),
+      email: new FormControl(''),
+      phoneNumber: new FormControl(''),
+      mobileNumber: new FormControl(''),
+      regionId: new FormControl(''),
+      cityId: new FormControl(''),
+      districtId: new FormControl(''),
+      longitude: new FormControl(''),
+      latitude: new FormControl(''),
+      streetName: new FormControl(''),
+      buildingNumber: new FormControl(''),
+      address: new FormControl(''),
+      contract: new FormControl(''),
+      restaurantType: new FormControl(''),
+      serviceType: new FormControl(''),
+      authorizedFirstName: new FormControl(''),
+      authorizedSecondName: new FormControl('',),
+      authorizedThirdName: new FormControl('',),
+      authorizedLastName: new FormControl('',),
+      authorizedMobileNumber: new FormControl('',),
+      authorizedEmail: new FormControl('')
+    });
   }
 
   async findRestaurants() {
@@ -174,4 +216,159 @@ export class RestaurantsComponent implements OnInit {
       }
     });
   }
+
+
+  async findAria() {
+
+    let request = {
+      method: "GET",
+      path: "lookups/findAll?category=RIG&parentId=",
+      body: null
+    };
+
+    let response = await this.httpService.httpRequest(request);
+    console.log(response);
+    if (response.status == 200) {
+      this.ariaList = response.data;
+      this.findCity(response.data[0].id)
+    } else {
+      this.ariaList = []
+    }
+  }
+
+
+  async findCity(ariaId) {
+
+    let request = {
+      method: "GET",
+      path: "lookups/findAll?category=CIT&parentId="+ariaId,
+      body: null
+    };
+
+    let response = await this.httpService.httpRequest(request);
+    console.log(response);
+    if (response.status == 200) {
+      this.cityList = response.data;
+    } else {
+      this.cityList = []
+    }
+  }
+
+  async findDistrict(cityId) {
+
+    let request = {
+      method: "GET",
+      path: "lookups/findAll?category=DIST&parentId="+cityId,
+      body: null
+    };
+
+    let response = await this.httpService.httpRequest(request);
+    console.log(response);
+    if (response.status == 200) {
+      this.cityList = response.data;
+    } else {
+      this.cityList = []
+    }
+  }
+
+
+  async uploadAttachment(file,controleName){
+    console.log('fileL: ',file);
+
+    let formData = new FormData(); 
+
+    formData.append("file",file[0]);
+
+    let request = {
+      method: "POST",
+      path: "file/upload",
+      body: formData
+    };
+
+    let response = await this.httpService.httpRequest(request);
+    if (response.status == 200) {
+      this.rest.get(controleName).setValue(response.data.url)
+    } else {
+      this.cityList = []
+    }
+    console.log(response)
+  }
+
+
+  async save(){
+    this.httpService.markFormGroupTouched(this.rest);
+
+    console.log(this.rest.valid);
+
+    if (this.rest.valid) {
+
+      let request = {
+        method: "POST",
+        path: "sp/rest/create",
+        body: this.rest.value
+      };
+
+      let response = await this.httpService.httpRequest(request);
+      console.log(response);
+      if(response.status == 200){
+
+        this.notifyService.addToast({ title: "Success", msg: "Operation Done Successfully", timeout: 10000, theme: '', position: 'top-center', type: 'success' });
+      
+      
+        this.showTable=!this.showTable;
+
+        this.rest.reset();
+
+        await this.findRestaurants();
+
+      }else{
+        this.notifyService.addToast({ title: "Error", msg: response.message, timeout: 10000, theme: '', position: 'top-center', type: 'error' });
+      }
+    }
+  }
+
+
+
+  // async uploadAttachment(controlName, fileName, file) {
+  //   this.loading = true;
+  //   if (file == undefined || file == null) {
+  //     this.loading = false;
+  //     return;
+  //   }
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   this.httpClient
+  //     .post<any>(`${environment.apiUrl}/uploadFile`, formData)
+  //     .subscribe(
+  //       (data) => {
+  //         console.log("data>>>>>>>>>>", data);
+  //         this.loading = false;
+  //         if (fileName == "fileName") {
+  //           this.fileName = data.body;
+  //         } else if (fileName == "fileName2") {
+  //           this.fileName2 = data.body;
+  //         } else if (fileName == "fileName3") {
+  //           this.fileName3 = data.body;
+  //         }
+
+  //         this.form.get(controlName).setValue(data.body);
+  //       },
+  //       async (error) => {
+  //         this.loading = false;
+  //         if (error.status == 401) {
+  //           this.authService.logoutUser();
+  //         } else if (error.status == 500) {
+  //           this.loading = false;
+
+  //           this.toaster.showError(
+  //             await this.findAllLanguagesService.getTranslate("tech_issue")
+  //           );
+  //         } else {
+  //           let response: any = error.error;
+  //           let errorMsg = response.msgWithLanguage;
+  //           this.toaster.showError(errorMsg);
+  //         }
+  //       }
+  //     );
+  // }
 }

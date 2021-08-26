@@ -40,9 +40,9 @@
               <span *ngIf="rest.status == 'INACTIVE'" class="badge badge-warning">Inactive</span>
             </td>
             <td>
-              <button (click)='editItem(item)' type="button" class="btn btn-ghost-primary"><i class="cil-pen"></i></button>
-              <button (click)='activeOrInactive(item)' type="button" class="btn btn-ghost-warning"><i class="cil-power-standby"></i></button>
-              <button (click)='deleteItem(item)' type="button" class="btn btn-ghost-danger"><i class="cil-trash"></i></button>
+              <button (click)='editItem(rest)' type="button" class="btn btn-ghost-primary"><i class="cil-pen"></i></button>
+              <button (click)='activeOrInactive(rest)' type="button" class="btn btn-ghost-warning"><i class="cil-power-standby"></i></button>
+              <button (click)='deleteItem(rest)' type="button" class="btn btn-ghost-danger"><i class="cil-trash"></i></button>
             </td>
           </tr>
         </tbody>
@@ -70,229 +70,218 @@
 
 
 <div *ngIf="!showTable" [@fadeInOutTranslate] class="col-lg-12">
-  <div class="card">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-md-10">
-          <h6>General Information</h6>
-        </div>
-        <div class="col-md-2 float-right card-right-button">
-          <button type="button" class="btn btn-sm btn-primary" (click)="showTable = !showTable">Back</button>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Commercial Register</label>
-            <input type="text" class="form-control" id="commercialRegister" placeholder="Enter Commercial Register">
+  <form [formGroup]="rest" (ngSubmit)="save()">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-10">
+            <h6>General Information</h6>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Brand Name English</label>
-            <input type="text" class="form-control" id="brandNameEn" placeholder="Enter Brand Name English">
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Brand Name Arabic</label>
-            <input type="text" class="form-control" id="brandNameAr" placeholder="Enter Brand Name Arabic">
+          <div class="col-md-2 float-right card-right-button">
+            <button type="button" class="btn btn-sm btn-primary" (click)="showTable = !showTable">Back</button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="name">Tax Number</label>
-            <input type="text" class="form-control" id="taxNumber" placeholder="Enter Tax Number">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Commercial Register</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['commercialRegister']" id="commercialRegister" placeholder="Enter Commercial Register">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Brand Name English</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['brandNameEn']" id="brandNameEn" placeholder="Enter Brand Name English">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Brand Name Arabic</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['brandNameAr']" id="brandNameAr" placeholder="Enter Brand Name Arabic">
+            </div>
           </div>
         </div>
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="name">Email</label>
-            <input type="text" class="form-control" id="email" placeholder="Enter Email">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="name">Tax Number</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['taxNumber']" id="taxNumber" placeholder="Enter Tax Number">
+            </div>
           </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="name">Phone Number</label>
-            <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="name">Email</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['email']" id="email" placeholder="Enter Email">
+            </div>
           </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="form-group">
-            <label for="name">Phone Number</label>
-            <input type="text" class="form-control" id="mobileNumber" placeholder="Enter Mobile Number">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="name">Phone Number</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['phoneNumber']" id="phoneNumber" placeholder="Enter Phone Number">
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-md-10">
-          <h6>Address Information</h6>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="ccmonth">Region</label>
-            <select class="form-control" id="region">
-              <option>North Province</option>
-              <option>Central province</option>
-              <option>South province</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="ccmonth">City</label>
-            <select class="form-control" id="city">
-              <option>Irbid</option>
-              <option>Jarash</option>
-              <option>Ajloun</option>
-              <option>Zarqa</option>
-              <option>Madaba</option>
-              <option>Mafraq</option>
-              <option>Irbid</option>
-              <option>Amman</option>
-              <option>Karak</option>
-              <option>Tafilah</option>
-              <option>Ma'an</option>
-              <option>Aqaba</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="ccmonth">District</label>
-            <select class="form-control" id="district">
-              <option>0</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Street Name</label>
-            <input type="text" class="form-control" id="streetName" placeholder="Enter Street Name">
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Building Number</label>
-            <input type="text" class="form-control" id="buildingNumber" placeholder="Enter Building Number">
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Address</label>
-            <input type="text" class="form-control" id="address" placeholder="Enter Address">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="name">Phone Number</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['mobileNumber']" id="mobileNumber" placeholder="Enter Mobile Number">
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-md-10">
-          <h6>Authorized Information</h6>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">First Name</label>
-            <input type="text" class="form-control" id="address" placeholder="Enter First Name">
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Second Name</label>
-            <input type="text" class="form-control" id="address" placeholder="Enter Second Name">
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Third Name</label>
-            <input type="text" class="form-control" id="address" placeholder="Enter Third Name">
+  
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-10">
+            <h6>Address Information</h6>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Last Name</label>
-            <input type="text" class="form-control" id="streetName" placeholder="Enter Last Name">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="ccmonth">Region</label>
+              <select [formControl]="rest.controls['regionId']" class="form-control" id="region" (change)="findCity($event.target.value)">
+                <option [value]="aria.id" *ngFor="let aria of ariaList">{{ aria.nameEn }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="ccmonth">City</label>
+              <select [formControl]="rest.controls['cityId']" class="form-control" id="city" (change)="findDistrict($event.target.value)">
+                <option [value]="city.id" *ngFor="let city of cityList">{{ city.nameEn }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="ccmonth">District</label>
+              <select [formControl]="rest.controls['districtId']" class="form-control" id="district">
+                <option [value]="district.id" *ngFor="let district of districtList">{{ district.nameEn }}</option>
+              </select>
+            </div>
           </div>
         </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Mobile Number</label>
-            <input type="text" class="form-control" id="buildingNumber" placeholder="Enter Mobile Number">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Street Name</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['streetName']" id="streetName" placeholder="Enter Street Name">
+            </div>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label for="name">Email</label>
-            <input type="text" class="form-control" id="address" placeholder="Enter Email">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Building Number</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['buildingNumber']" id="buildingNumber" placeholder="Enter Building Number">
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-md-10">
-          <h6>Attachment</h6>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="form-group">
-            <label for="name">Contract Document</label>
-            <input type="file" class="form-control" id="address" placeholder="Upload Contract Document">
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="form-group">
-            <label for="name">Restaurant Logo</label>
-            <input type="file" class="form-control" id="address" placeholder="Upload Contract Document">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Address</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['address']" id="address" placeholder="Enter Address">
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-md-10">
-          <h6>Submit</h6>
+  
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-10">
+            <h6>Authorized Information</h6>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">First Name</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedFirstName']" id="address" placeholder="Enter First Name">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Second Name</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedSecondName']" id="address" placeholder="Enter Second Name">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Third Name</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedThirdName']" id="address" placeholder="Enter Third Name">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Last Name</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedLastName']" id="streetName" placeholder="Enter Last Name">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Mobile Number</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedMobileNumber']" id="buildingNumber" placeholder="Enter Mobile Number">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="name">Email</label>
+              <input type="text" class="form-control" [formControl]="rest.controls['authorizedEmail']" id="address" placeholder="Enter Email">
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="card-body">
-      <div class="row">
-        <button style="margin: 2px;" type="button" class="btn btn-primary px-4" (click)="saveRest()">Save</button>
-        <button style="margin: 2px;" type="button" class="btn btn-success px-4" (click)="showTable = !showTable">Cancel</button>
+  
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-10">
+            <h6>Attachment</h6>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="name">Contract Document</label>
+              <input type="file" class="form-control" (change)="uploadAttachment($event.target.files,'contract')" id="address" placeholder="Upload Contract Document">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="name">Restaurant Logo</label>
+              <input type="file" class="form-control" (change)="uploadAttachment($event.target.files,'logo')" id="address" placeholder="Upload Contract Document">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-10">
+            <h6>Submit</h6>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <button style="margin: 2px;" type="button" class="btn btn-primary px-4" (click)="save()">Save</button>
+          <button style="margin: 2px;" type="button" class="btn btn-success px-4" (click)="showTable = !showTable">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
