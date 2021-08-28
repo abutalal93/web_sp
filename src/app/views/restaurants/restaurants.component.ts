@@ -288,8 +288,6 @@ export class RestaurantsComponent implements OnInit {
     let response = await this.httpService.httpRequest(request);
     if (response.status == 200) {
       this.rest.get(controleName).setValue(response.data.url)
-    } else {
-      this.cityList = []
     }
     console.log(response)
   }
